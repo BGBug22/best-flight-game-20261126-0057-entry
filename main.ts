@@ -6,7 +6,7 @@
 // Run it outside the grader with MAKEFUN_OUTPUT_DIR set:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
@@ -14,8 +14,9 @@ import { buildDossier } from './vendor/makefun-game.ts';
 const repoRoot = fileURLToPath(new URL('.', import.meta.url));
 const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-// Start from a clean output directory so stale files never leak in.
-rmSync(outputDir, { recursive: true, force: true });
+// The grader hands us an output directory that is a mounted volume: it already
+// exists and cannot be removed or swapped out. So we never delete it here; we
+// only make sure it is present and then place our files inside it.
 mkdirSync(outputDir, { recursive: true });
 
 cpSync(join(repoRoot, 'game'), join(outputDir, 'game'), { recursive: true });
